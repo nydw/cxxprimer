@@ -1,4 +1,4 @@
-# 《C++ Primer中文版（第5版）》笔记
+# 《cxxprimer》笔记
 
 ![Cover](Cover.png)
 

@@ -12,14 +12,14 @@ C++定义了一元运算符（unary operator）和二元运算符（binary opera
 
 C++定义了运算符作用于内置类型和复合类型的运算对象时所执行的操作。当运算符作用于类类型的运算对象时，用户可以自定义其含义，这被称作运算符重载（overloaded operator）。
 
-C++的表达式分为右值（rvalue）和左值（lvalue）。当一个对象被用作右值的时候，用的是对象的值（内容）；当对象被用作左值时，用的是对象的地址。需要右值的地方可以用左值代替，反之则不行。
+C++的表达式分为右值（rvalue）和左值（lvalue）。==当一个对象被用作右值的时候，用的是对象的值（内容）；当对象被用作左值时，用的是对象的地址==。需要右值的地方可以用左值代替，反之则不行。
 
 - 赋值运算符需要一个非常量左值作为其左侧运算对象，返回结果也是一个左值。
 - 取地址符作用于左值运算对象，返回指向该运算对象的指针，该指针是一个右值。
 - 内置解引用运算符、下标运算符、迭代器解引用运算符、`string`和`vector`的下标运算符都返回左值。
-- 内置类型和迭代器的递增递减运算符作用于左值运算对象。前置版本返回左值，后置版本返回右值。
+- 内置类型和迭代器的递增递减运算符作用于左值运算对象。==前置版本返回左值，后置版本返回右值==。
 
-如果`decltype`作用于一个求值结果是左值的表达式，会得到引用类型。
+==如果`decltype`作用于一个求值结果是左值的表达式，会得到引用类型==。
 
 ### 优先级与结合律（Precedence and Associativity）
 
@@ -190,7 +190,7 @@ for(vector<int>::size_type ix = 0; ix != ivec.size(); ++ix, --cnt)
 
 常量整数值0或字面值`nullptr`能转换成任意指针类型；指向任意非常量的指针能转换成`void*`；指向任意对象的指针能转换成`const void*`。
 
-任意一种算术类型或指针类型都能转换成布尔类型。如果指针或算术类型的值为0，转换结果是`false`，否则是`true`。
+==任意一种算术类型或指针类型都能转换成布尔类型==。如果指针或算术类型的值为0，转换结果是`false`，否则是`true`。
 
 指向非常量类型的指针能转换成指向相应的常量类型的指针。
 
@@ -216,4 +216,148 @@ cast-name<type>(expression);
 ```c++
 type (expression);    // function-style cast notation
 (type) expression;    // C-language-style cast notation
+```
+
+### **==附注==**
+==reinterpret_cast==不能像const_cast那样去除const修饰符。将指向const int的指针付给指向函数的指针，指向函数的指针默认应该就带有"所指内容不可变"的特性。所以以下代码编译通过。
+
+```c++  
+FunctionPointer funcP = reinterpret_cast<FunctionPointer> (Intpointer);
+```
+==dynamic_cast==运算符的主要用途：将基类的指针或引用安全地转换成派生类的指针或引用。前提条件：当我们将dynamic_cast用于某种类型的指针或引用时，只有该类型==至少含有虚函数==时(最简单是基类析构函数为虚函数)，才能进行这种转换。否则，编译器会报错。
+
+==const_cast==转换符是用来移除变量的const或volatile限定符。
+
+```c++
+const int consatant = 20;
+extern void Printer (int* val);
+Printer(const_cast<int *>(&consatant));  // 用于传参转换
+```
+
+
+
+```c++
+/* 用const_cast转换之后的指针修改const对象内容，对象内容不变。
+   但是使用传统强制类型转换，对象内容会变。
+*/
+
+{
+const int constant = 21; // mark 并没有被修改
+const int* const_p = &constant;
+int* modify_p = const_cast<int*>(const_p);
+*modify_p = 7;
+
+cout << "constant: "<< constant <<endl;
+cout << " const_p: "<< *const_p <<endl;
+cout << "modify_p: "<< *modify_p <<endl;
+
+cout << "constant: "<< &constant <<endl;
+cout << " const_p: "<< const_p <<endl;
+cout << "modify_p: "<< modify_p <<endl;
+}
+/**
+constant: 21  // mark
+ const_p: 7
+modifier: 7
+
+constant: 0x7fff5fbff72c
+ const_p: 0x7fff5fbff72c
+modifier: 0x7fff5fbff72c
+**/
+
+{
+const int constant = 21;
+const int* const_p = &constant;
+int* modifier = (int*)(const_p);    
+    
+cout << "constant: "<< constant <<endl;
+cout << "const_p: "<< *const_p <<endl;
+cout << "modifier: "<< *modifier <<endl;
+
+cout << "constant: "<< &constant <<endl;
+cout << "const_p: "<< const_p <<endl;
+cout << "modifier: "<< modifier <<endl;
+}
+/**
+constant: 21
+const_p: 21
+modifier: 21
+constant: 0x7d12834300dc
+const_p: 0x7d12834300dc
+modifier: 0x7d12834300dc
+**/
+```
+
+```c++
+
+/*想修改非const的变量内容，但只有const限定的指针，可以去const来修改 */ 
+
+#include <iostream>
+using namespace std;
+
+int main(void) {
+	int variable = 21;
+	int* const_p = &variable;
+	int* modifier = const_cast<int*>(const_p);
+	
+	*modifier = 7
+	cout << "variable:" << variable << endl;
+	
+	return 0;
+} 
+
+/**
+variable:7
+**/
+```
+
+```c++
+class ABC {
+    
+public:
+   ABC(int v):a(v){}
+   void const_func()  {a=2; std::cout << a << " fake_const_func\n";}  
+   void const_func() const {std::cout << a << " real_const_func\n";}  // const可以做为重载标志符
+   
+   
+   void func() {a=1; std::cout << " func\n";}
+  
+   int a;
+};
+
+int main() {
+ {
+  ABC t(0);
+  t.func();
+  t.const_func();
+ }
+std::cout << "------------\n";
+ {
+  const ABC t(0);
+  /*error: passing 'const ABC' as 'this' argument of 'void ABC::func()' discards qualifiers*/
+  //t.func(); 
+
+  t.const_func();
+ }
+ std::cout << "------------\n";
+ {
+  const ABC t(0);
+  ABC *p =const_cast<ABC*>(&t);  // const对象想调用自身的非const方法
+  p->func();
+  p->const_func();
+  t.const_func();
+ }
+}
+
+/*
+ func
+2 fake_const_func
+------------
+0 real_const_func
+------------
+ func
+2 fake_const_func
+2 real_const_func
+*/
+
 ```

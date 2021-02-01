@@ -65,7 +65,7 @@ while (u > 0)
 
 ### 字面值常量（Literals）
 
-以`0`开头的整数代表八进制（octal）数，以`0x`或`0X`开头的整数代表十六进制（hexadecimal）数。在C++14中，`0b`或`0B`开头的整数代表二进制（binary）数。
+==以`0`开头的整数代表八进制（octal）数，以`0x`或`0X`开头的整数代表十六进制（hexadecimal）数==。在C++14中，`0b`或`0B`开头的整数代表二进制（binary）数。
 
 整型字面值具体的数据类型由它的值和符号决定。
 
@@ -526,15 +526,15 @@ decltype(cj) y = x;     // y has type const int& and is bound to x
 decltype(cj) z;     // error: z is a reference and must be initialized
 ```
 
-如果`decltype`使用的表达式不是一个变量，则`decltype`返回表达式结果对应的类型。如果表达式的内容是解引用操作，则`decltype`将得到引用类型。如果`decltype`使用的是一个不加括号的变量，则得到的结果就是该变量的类型；如果给变量加上了一层或多层括号，则`decltype`会得到引用类型，因为变量是一种可以作为赋值语句左值的特殊表达式。
+==如果`decltype`使用的表达式不是一个变量，则`decltype`返回表达式结果对应的类型。如果表达式的内容是解引用操作，则`decltype`将得到引用类型。如果`decltype`使用的是一个不加括号的变量，则得到的结果就是该变量的类型；如果给变量加上了一层或多层括号，则`decltype`会得到引用类型，因为变量是一种可以作为赋值语句左值的特殊表达式==。
 
-`decltype((var))`的结果永远是引用，而`decltype(var)`的结果只有当*var*本身是一个引用时才会是引用。
+==decltype((var))`的结果永远是引用，而`decltype(var)`的结果只有当*var*本身是一个引用时才会是引用==。
 
 ## 自定义数据结构（Defining Our Own Data Structures）
 
-C++11规定可以为类的数据成员（data member）提供一个类内初始值（in-class initializer）。创建对象时，类内初始值将用于初始化数据成员，没有初始值的成员将被默认初始化。
+C++11规定可以为类的数据成员（data member）提供一个类内初始值（in-class initializer）。==创建对象时，类内初始值将用于初始化数据成员，没有初始值的成员将被默认初始化==。
 
-类内初始值不能使用圆括号。
+==类内初始值不能使用圆括号==。
 
 类定义的最后应该加上分号。
 
@@ -557,7 +557,7 @@ struct Sales_data
 #endif
 ```
 
-在高级版本的IDE环境中，可以直接使用`#pragma once`命令来防止头文件的重复包含。
+==在高级版本的IDE环境中，可以直接使用`#pragma once`命令来防止头文件的重复包含==。
 
 预处理变量无视C++语言中关于作用域的规则。
 

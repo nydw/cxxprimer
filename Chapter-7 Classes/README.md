@@ -10,7 +10,7 @@
 
 ### 定义改进的Sales_data类（Defining the Revised Sales_data Class）
 
-成员函数（member function）的声明必须在类的内部，定义则既可以在类的内部也可以在类的外部。定义在类内部的函数是隐式的内联函数。
+成员函数（member function）的声明必须在类的内部，定义则既可以在类的内部也可以在类的外部。==定义在类内部的函数是隐式的内联函数==。
 
 ```c++
 struct Sales_data
@@ -128,8 +128,8 @@ struct Sales_data
 
 如果类没有显式地定义构造函数，则编译器会为类隐式地定义一个默认构造函数，该构造函数也被称为合成的默认构造函数（synthesized default constructor）。对于大多数类来说，合成的默认构造函数初始化数据成员的规则如下：
 
-- 如果存在类内初始值，则用它来初始化成员。
-- 否则默认初始化该成员。
+- ==如果存在类内初始值，则用它来初始化成员==。
+- ==否则默认初始化该成员==。
 
 某些类不能依赖于合成的默认构造函数。
 
@@ -149,7 +149,7 @@ Sales_data(const std::string &s): bookNo(s) { }
 Sales_data(const std::string &s, unsigned n, double p):
     bookNo(s), units_sold(n), revenue(p*n) { }
 ```
-当某个数据成员被构造函数初始值列表忽略时，它会以与合成默认构造函数相同的方式隐式初始化。
+==当某个数据成员被构造函数初始值列表忽略时，它会以与合成默认构造函数相同的方式隐式初始化==。
 
 ```c++
 // has the same behavior as the original constructor defined above
@@ -167,7 +167,7 @@ Sales_data(const std::string &s):
 
 使用访问说明符（access specifier）可以加强类的封装性：
 
-- 定义在`public`说明符之后的成员在整个程序内都可以被访问。`public`成员定义类的接口。
+- 定义在`public`说明符之后的成员在==整个程序内都可以被访问==。`public`成员定义类的接口。
 - 定义在`private`说明符之后的成员可以被类的成员函数访问，但是不能被使用该类的代码访问。`private`部分封装了类的实现细节。
 
 ```c++
@@ -230,7 +230,7 @@ std::ostream &print(std::ostream&, const Sales_data&);
 
 友元声明只能出现在类定义的内部，具体位置不限。友元不是类的成员，也不受它所在区域访问级别的约束。
 
-通常情况下，最好在类定义开始或结束前的位置集中声明友元。
+通常情况下，==最好在类定义开始或结束前的位置集中声明友元==。
 
 封装的好处：
 
@@ -245,7 +245,7 @@ std::ostream &print(std::ostream&, const Sales_data&);
 
 ### 类成员再探（Class Members Revisited）
 
-由类定义的类型名字和其他成员一样存在访问限制，可以是`public`或`private`中的一种。
+==由类定义的类型名字和其他成员一样存在访问限制==，可以是`public`或`private`中的一种。
 
 ```c++
 class Screen 
@@ -265,7 +265,7 @@ public:
 
 `inline`成员函数该与类定义在同一个头文件中。
 
-使用关键字`mutable`可以声明可变数据成员（mutable data member）。可变数据成员永远不会是`const`的，即使它在`const`对象内。因此`const`成员函数可以修改可变成员的值。
+使用关键字`mutable`可以声明可变数据成员（mutable data member）。==mutable可变数据成员永远不会是const的，即使它在const对象内==。因此`const`成员函数可以修改可变成员的值。
 
 ```c++
 class Screen 
@@ -284,7 +284,7 @@ void Screen::some_member() const
 }
 ```
 
-提供类内初始值时，必须使用`=`或花括号形式。
+==提供类内初始值时，必须使用”=“或花括号形式==。
 
 ### 返回\*this的成员函数（Functions That Return \*this）
 
@@ -317,15 +317,15 @@ blank.display(cout);    // calls const version
 
 ### 类类型（Class Types）
 
-每个类定义了唯一的类型。即使两个类的成员列表完全一致，它们也是不同的类型。
+==每个类定义了唯一的类型。即使两个类的成员列表完全一致，它们也是不同的类型==。
 
-可以仅仅声明一个类而暂时不定义它。这种声明被称作前向声明（forward declaration），用于引入类的名字。在类声明之后定义之前都是一个不完全类型（incomplete type）。
+可以仅仅声明一个类而暂时不定义它。这种声明被称作==前向声明==（forward declaration），用于引入类的名字。在类声明之后定义之前都是一个不完全类型（incomplete type）。
 
 ```c++
 class Screen;   // declaration of the Screen class
 ```
 
-可以定义指向不完全类型的指针或引用，也可以声明（不能定义）以不完全类型作为参数或返回类型的函数。
+==可以定义指向不完全类型的指针或引用，也可以声明（不能定义）以不完全类型作为参数或返回类型的函数==。
 
 只有当类全部完成后才算被定义，所以一个类的成员类型不能是该类本身。但是一旦类的名字出现，就可以被认为是声明过了，因此类可以包含指向它自身类型的引用或指针。
 
@@ -340,7 +340,7 @@ class Link_screen
 
 ### 友元再探（Friendship Revisited）
 
-除了普通函数，类还可以把其他类或其他类的成员函数声明为友元。友元类的成员函数可以访问此类包括非公有成员在内的所有成员。
+除了普通函数，类还可以把==其他类==或==其他类的成员函数==声明为友元。友元类的成员函数可以访问此类包括非公有成员在内的所有成员。
 
 ```c++
 class Screen 
@@ -351,7 +351,7 @@ class Screen
 };
 ```
 
-友元函数可以直接定义在类的内部，这种函数是隐式内联的。但是必须在类外部提供相应声明令函数可见。
+==友元函数可以直接定义在类的内部==，这种函数是隐式内联的。但是必须在类外部提供相应声明令函数可见。
 
 ```c++
 struct X
@@ -369,7 +369,7 @@ void X::h() { return f(); }     // ok: declaration for f is now in scope
 
 友元关系不存在传递性。
 
-把其他类的成员函数声明为友元时，必须明确指定该函数所属的类名。
+把其他类的成员函数声明为友元时，必须==明确指定该函数所属的类名==。
 
 ```c++
 class Screen
@@ -472,9 +472,9 @@ void Screen::dummy_fcn(pos ht)
 
 ### 构造函数初始值列表（Constructor Initializer List）
 
-如果没有在构造函数初始值列表中显式初始化成员，该成员会在构造函数体之前执行默认初始化。
+如果没有在构造函数初始值列表中显式初始化成员，该成员会在==构造函数体之前==执行默认初始化。
 
-如果成员是`const`、引用，或者是某种未定义默认构造函数的类类型，必须在初始值列表中将其初始化。
+==如果成员是const、引用，或者是某种未定义默认构造函数的类类型，必须在初始值列表中将其初始化==。
 
 ```c++
 class ConstRef
@@ -540,7 +540,7 @@ Sales_data obj2;    // ok: obj2 is an object, not a function
 
 ### 隐式的类类型转换（Implicit Class-Type Conversions）
 
-如果构造函数只接受一个实参，则它实际上定义了转换为此类类型的隐式转换机制。这种构造函数被称为转换构造函数（converting constructor）。
+如果构造函数只接受一个实参，则它实际上定义了转换为此类类型的隐式转换机制。这种构造函数被称为==转换构造函数==（converting constructor）。
 
 ```c++
 string null_book = "9-999-99999-9";
@@ -562,7 +562,7 @@ item.combine(string("9-999-99999-9"));
 item.combine(Sales_data("9-999-99999-9"));
 ```
 
-在要求隐式转换的程序上下文中，可以通过将构造函数声明为`explicit`的加以阻止。
+在要求隐式转换的程序上下文中，可以通过将构造函数==声明为explicit的加以阻止==。
 
 ```c++
 class Sales_data
@@ -571,7 +571,9 @@ public:
     Sales_data() = default;
     Sales_data(const std::string &s, unsigned n, double p):
         bookNo(s), units_sold(n), revenue(p*n) { }
+    
     explicit Sales_data(const std::string &s): bookNo(s) { }
+    
     explicit Sales_data(std::istream&);
     // remaining members as before
 };
@@ -581,7 +583,7 @@ public:
 
 只能在类内声明构造函数时使用`explicit`关键字，在类外定义时不能重复。
 
-执行拷贝初始化时（使用`=`）会发生隐式转换，所以`explicit`构造函数只能用于直接初始化。
+执行拷贝初始化时（使用`=`）会发生隐式转换，所以==explicit构造函数只能用于直接初始化==。
 
 ```c++
 Sales_data item1 (null_book);   // ok: direct initialization
@@ -597,6 +599,19 @@ item.combine(Sales_data(null_book));
 // ok: static_cast can use an explicit constructor
 item.combine(static_cast<Sales_data>(cin));
 ```
+拷贝构造函数不仅在我们用等号=定义变量时调用，在下列情况下也会调用：
+
+(1) 根据另一个同类型的对象显式或隐式初始化一个对象；
+
+(2) 将一个对象作为实参传递给一个非引用类型的形参；
+
+(3) 从一个返回类型为非引用类型的函数返回一个对象；
+
+(4) 用花括号列表初始化一个数组中的元素或一个聚合类中的成员；
+
+(5) 标准库容器初始化，或者调用insert或push成员时，容器会对其元素进行拷贝初始化。
+
+
 
 ### 聚合类（Aggregate Classes）
 
@@ -682,7 +697,7 @@ private:
 
 在类外部定义静态成员时，不能重复`static`关键字，其只能用于类内部的声明语句。
 
-由于静态数据成员不属于类的任何一个对象，因此它们并不是在创建类对象时被定义的。通常情况下，不应该在类内部初始化静态成员。而必须在类外部定义并初始化每个静态成员。一个静态成员只能被定义一次。一旦它被定义，就会一直存在于程序的整个生命周期中。
+==由于静态数据成员不属于类的任何一个对象，因此它们并不是在创建类对象时被定义的==。通常情况下，不应该在类内部初始化静态成员。而必须在类外部定义并初始化每个静态成员。一个静态成员只能被定义一次。一旦它被定义，就会一直存在于程序的整个生命周期中。
 
 ```c++
 // define and initialize a static class member
@@ -716,7 +731,7 @@ class Bar
 }
 ```
 
-可以使用静态成员作为函数的默认实参。
+==可以使用静态成员作为函数的默认实参==。
 
 ```c++
 class Screen

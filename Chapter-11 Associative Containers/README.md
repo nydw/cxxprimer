@@ -174,8 +174,8 @@ word_count.insert(map<string, size_t>::value_type(word, 1));
 
 `insert`或`emplace`的返回值依赖于容器类型和参数：
 
-- 对于不包含重复关键字的容器，添加单一元素的`insert`和`emplace`版本返回一个`pair`，表示操作是否成功。`pair`的`first`成员是一个迭代器，指向具有给定关键字的元素；`second`成员是一个`bool`值。如果关键字已在容器中，则`insert`直接返回，`bool`值为`false`。如果关键字不存在，元素会被添加至容器中，`bool`值为`true`。
-- 对于允许包含重复关键字的容器，添加单一元素的`insert`和`emplace`版本返回指向新元素的迭代器。
+- 对于不包含重复关键字的容器，==添加单一元素的insert和emplace版本返回一个pair，表示操作是否成功==。`pair`的`first`成员是一个迭代器，指向具有给定关键字的元素；`second`成员是一个`bool`值。如果关键字已在容器中，则`insert`直接返回，`bool`值为`false`。如果关键字不存在，元素会被添加至容器中，`bool`值为`true`。
+- 对于允许包含重复关键字的容器，添加单一元素的`insert`和`emplace`版本==返回指向新元素的迭代器==。
 
 ### 删除元素（Erasing Elements）
 
@@ -183,7 +183,7 @@ word_count.insert(map<string, size_t>::value_type(word, 1));
 
 ![11-5](Images/11-5.png)
 
-与顺序容器不同，关联容器提供了一个额外的`erase`操作。它接受一个`key_type`参数，删除所有匹配给定关键字的元素（如果存在），返回实际删除的元素数量。对于不包含重复关键字的容器，`erase`的返回值总是1或0。若返回值为0，则表示想要删除的元素并不在容器中。
+与顺序容器不同，关联容器提供了==一个额外的erase操作==。它接受一个`key_type`参数，删除所有匹配给定关键字的元素（如果存在），==返回实际删除的元素数量==。对于不包含重复关键字的容器，`erase`的返回值总是1或0。若返回值为0，则表示想要删除的元素并不在容器中。
 
 ### map的下标操作（Subscripting a map）
 

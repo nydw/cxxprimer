@@ -2,7 +2,7 @@
 
 ## 概述（Overview）
 
-大多数算法都定义在头文件*algorithm*中，此外标准库还在头文件*numeric*中定义了一组数值泛型算法。一般情况下，这些算法并不直接操作容器，而是遍历由两个迭代器指定的元素范围进行操作。
+==大多数算法都定义在头文件*algorithm*中==，此外标准库还在头文件*numeric*中定义了一组数值泛型算法。一般情况下，这些算法并不直接操作容器，而是遍历由两个迭代器指定的元素范围进行操作。
 
 `find`函数将范围中的每个元素与给定值进行比较，返回指向第一个等于给定值的元素的迭代器。如果无匹配元素，则返回其第二个参数来表示搜索失败。
 
@@ -90,7 +90,7 @@ auto ret = copy(begin(a1), end(a1), a2);    // copy a1 into a2
 replace(ilst.begin(), ilst.end(), 0, 42);
 ```
 
-相对于`replace`，`replace_copy`函数可以保留原序列不变。它接受第三个迭代器参数，指定调整后序列的保存位置。
+相对于`replace`，`replace_copy`函数可以保留原序列不变。==replace_copy接受第三个迭代器参数，指定调整后序列的保存位置==。
 
 ```c++
 // use back_inserter to grow destination as needed
@@ -139,13 +139,13 @@ bool isShorter(const string &s1, const string &s2)
 sort(words.begin(), words.end(), isShorter);
 ```
 
-稳定排序函数`stable_sort`可以维持输入序列中相等元素的原有顺序。
+==稳定排序函数stable_sort可以维持输入序列中相等元素的原有顺序==。
 
 ### lambda表达式（Lambda Expressions）
 
 `find_if`函数接受两个迭代器参数和一个谓词参数。迭代器参数用于指定序列范围，之后对序列中的每个元素调用给定谓词，并返回第一个使谓词返回非0值的元素。如果不存在，则返回尾迭代器。
 
-对于一个对象或表达式，如果可以对其使用调用运算符`()`，则称它为可调用对象（callable object）。可以向算法传递任何类别的可调用对象。
+对于一个对象或表达式，如果可以对其使用==调用运算符()==，则称它为可调用对象（callable object）。可以向算法传递任何类别的可调用对象。
 
 一个`lambda`表达式表示一个可调用的代码单元，类似未命名的内联函数，但可以定义在函数内部。其形式如下：
 
@@ -153,7 +153,7 @@ sort(words.begin(), words.end(), isShorter);
 [capture list] (parameter list) -> return type { function body }
 ```
 
-其中，*capture list*（捕获列表）是一个由`lambda`所在函数定义的局部变量的列表（通常为空）。*return type*、*parameter list*和*function body*与普通函数一样，分别表示返回类型、参数列表和函数体。但与普通函数不同，`lambda`必须使用尾置返回类型，且不能有默认实参。
+其中，*capture list*（捕获列表）是一个由`lambda`所在函数定义的局部变量的列表（通常为空）。*return type*、*parameter list*和*function body*与普通函数一样，分别表示返回类型、参数列表和函数体。但与普通函数不同，==lambda必须使用尾置返回类型，且不能有默认实参==。
 
 定义`lambda`时可以省略参数列表和返回类型，但必须包含捕获列表和函数体。省略参数列表等价于指定空参数列表。省略返回类型时，若函数体只是一个`return`语句，则返回类型由返回表达式的类型推断而来。否则返回类型为`void`。
 
@@ -180,7 +180,7 @@ for_each(wc, words.end(),
 
 ### lambda捕获和返回（Lambda Captures and Returns）
 
-被`lambda`捕获的变量的值是在`lambda`创建时拷贝，而不是调用时拷贝。在`lambda`创建后修改局部变量不会影响`lambda`内对应的值。
+==被lambda捕获的变量的值是在lambda创建时拷贝，而不是调用时拷贝==。在`lambda`创建后修改局部变量不会影响`lambda`内对应的值。
 
 ```c++
 size_t v1 = 42; // local variable
@@ -217,7 +217,7 @@ for_each(words.begin(), words.end(),
 
 ![10-2](Images/10-2.png)
 
-默认情况下，对于值方式捕获的变量，`lambda`不能修改其值。如果希望修改，就必须在参数列表后添加关键字`mutable`。
+==默认情况下，对于值方式捕获的变量，lambda不能修改其值。如果希望修改，就必须在参数列表后添加关键字mutable==。
 
 ```c++
 size_t v1 = 42; // local variable
@@ -246,7 +246,7 @@ transform(vi.begin(), vi.end(), vi.begin(),
 auto newCallable = bind(callable, arg_list);
 ```
 
-其中，*newCallable*本身是一个可调用对象，*arg_list*是一个以逗号分隔的参数列表，对应给定的*callable*的参数。之后调用*newCallable*时，*newCallable*会再调用*callable*，并传递给它*arg_list*中的参数。*arg_list*中可能包含形如`_n`的名字，其中*n*是一个整数。这些参数是占位符，表示*newCallable*的参数，它们占据了传递给*newCallable*的参数的位置。数值*n*表示生成的可调用对象中参数的位置：`_1`为*newCallable*的第一个参数，`_2`为*newCallable*的第二个参数，依次类推。这些名字都定义在命名空间*placeholders*中，它又定义在命名空间*std*中，因此使用时应该进行双重限定。
+其中，*newCallable*本身是一个可调用对象，*arg_list*是一个以逗号分隔的参数列表，对应给定的*callable*的参数。之后调用*newCallable*时，*newCallable*会再调用*callable*，并传递给它*arg_list*中的参数。*arg_list*中可能包含形如`_n`的名字，其中*n*是一个整数。==这些参数是占位符==，表示*newCallable*的参数，它们占据了传递给*newCallable*的参数的位置。数值*n*表示生成的可调用对象中参数的位置：`_1`为*newCallable*的第一个参数，`_2`为*newCallable*的第二个参数，依次类推。这些名字都定义在命名空间*placeholders*中，它又定义在命名空间*std*中，因此使用时应该进行双重限定。
 
 ```c++
 using std::placeholders::_1;
@@ -269,9 +269,9 @@ sort(words.begin(), words.end(), isShorter);
 sort(words.begin(), words.end(), bind(isShorter, _2, _1));
 ```
 
-默认情况下，`bind`函数的非占位符参数被拷贝到`bind`返回的可调用对象中。但有些类型不支持拷贝操作。
+==默认情况下，bind函数的非占位符参数被拷贝到bind返回的可调用对象中==。但有些类型不支持拷贝操作。
 
-如果希望传递给`bind`一个对象而又不拷贝它，则必须使用标准库的`ref`函数。`ref`函数返回一个对象，包含给定的引用，此对象是可以拷贝的。`cref`函数生成保存`const`引用的类。
+==如果希望传递给bind一个对象而又不拷贝它，则必须使用标准库的ref函数==。`ref`函数返回一个对象，包含给定的引用，此对象是可以拷贝的。`cref`函数生成保存`const`引用的类。
 
 ```c++
 ostream &print(ostream &os, const string &s, char c);
@@ -334,7 +334,7 @@ while (in_iter != eof)      // while there's valid input to read
     vec.push_back(*in_iter++);
 ```
 
-可以直接使用流迭代器构造容器。
+==可以直接使用流迭代器构造容器==。
 
 ```c++
 istream_iterator<int> in_iter(cin), eof;    // read ints from cin
@@ -362,7 +362,7 @@ for (auto e : vec)
 cout << endl;
 ```
 
-可以为任何定义了`<<`运算符的类型创建`istream_iterator`对象，为定义了`>>`运算符的类型创建`ostream_iterator`对象。
+==可以为任何定义了<<运算符的类型创建 istream_iterator对象，为定义了>>运算符的类型创建ostream_iterator对象==。
 
 ### 反向迭代器（Reverse Iterators）
 
@@ -378,7 +378,7 @@ sort(vec.rbegin(), vec.rend());
 
 不能从`forward_list`或流迭代器创建反向迭代器。
 
-调用反向迭代器的`base`函数可以获得其对应的普通迭代器。
+==调用反向迭代器的base函数可以获得其对应的普通迭代器==。
 
 ```c++
 // find the last element in a comma-separated list
@@ -471,7 +471,7 @@ reverse_copy(beg, end, dest);   // copy elements in reverse order into dest
 
 ![10-9](Images/10-9.png)
 
-`list`和`forward_list`的`splice`函数可以进行容器合并，其参数如下：
+==list和forward_list的splice函数可以进行容器合并==，其参数如下：
 
 ![10-10](Images/10-10.png)
 

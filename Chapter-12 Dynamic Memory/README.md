@@ -6,7 +6,7 @@
 
 C++中的动态内存管理通过一对运算符完成：`new`在动态内存中为对象分配空间并返回指向该对象的指针，可以选择对对象进行初始化；`delete`接受一个动态对象的指针，销毁该对象并释放与之关联的内存。
 
-新标准库提供了两种智能指针（smart pointer）类型来管理动态对象。智能指针的行为类似常规指针，但它自动释放所指向的对象。这两种智能指针的区别在于管理底层指针的方式：`shared_ptr`允许多个指针指向同一个对象；`unique_ptr`独占所指向的对象。标准库还定义了一个名为`weak_ptr`的伴随类，它是一种弱引用，指向`shared_ptr`所管理的对象。这三种类型都定义在头文件*memory*中。
+新标准库提供了两种智能指针（smart pointer）类型来管理动态对象。智能指针的行为类似常规指针，但它自动释放所指向的对象。这两种智能指针的区别在于管理底层指针的方式：==shared_ptr允许多个指针指向同一个对象；unique_ptr独占所指向的对象==。标准库还定义了一个名为`weak_ptr`的伴随类，它是一种弱引用，指向`shared_ptr`所管理的对象。这三种类型都定义在头文件*memory*中。
 
 ### shared_ptr类（The shared_ptr Class）
 
@@ -98,7 +98,7 @@ auto p2 = new auto{a,b,c};  // error: must use parentheses for the initializer
 
 可以用`new`分配`const`对象，返回指向`const`类型的指针。动态分配的`const`对象必须初始化。
 
-默认情况下，如果`new`不能分配所要求的内存空间，会抛出`bad_alloc`异常。使用定位`new`（placement new）可以阻止其抛出异常。定位`new`表达式允许程序向`new`传递额外参数。如果将`nothrow`传递给`new`，则`new`在分配失败后会返回空指针。`bad_alloc`和`nothrow`都定义在头文件*new*中。
+默认情况下，如果`new`不能分配所要求的内存空间，会抛出`bad_alloc`异常。使用==定位new（placement new）==可以阻止其抛出异常。定位`new`表达式允许程序向`new`传递额外参数。如果将`nothrow`传递给`new`，则`new`在分配失败后会返回空指针。`bad_alloc`和`nothrow`都定义在头文件*new*中。
 
 ```c++
 // if allocation fails, new returns a null pointer
@@ -111,6 +111,80 @@ int *p2 = new (nothrow) int;  // if allocation fails, new returns a null pointer
 由内置指针管理的动态对象在被显式释放前一直存在。
 
 `delete`一个指针后，指针值就无效了（空悬指针，dangling pointer）。为了防止后续的错误访问，应该在`delete`之后将指针值置空。
+
+**new operator实际上执行了以下三个步骤：**
+1、调用operator new分配内存（后面要说的第二种new），如果类本身定义了operator new，那么会调用类自己的operator new，而不是全局的；
+2、调用A的构造函数A::A(int)；
+3、返回相应的指针
+
+**自定义operator new：**
+
+```c++
+class A
+{
+public:
+    A(int i) :a(i){}
+    void* operator new(size_t size) // 异常类型
+    {
+        cout << "call A::operator new" << endl;
+        return malloc(size);
+    }
+    void operator delete(void* p)
+    {
+        cout << "call A::operator delete" << endl;
+        return free(p);
+    }
+    void* operator new(size_t size, const nothrow_t& nothrow_value) noexcept // 无异常类型
+    {
+        cout << "call A::operator new (noexcept)" << endl;
+        return malloc(size);
+    }
+    void operator delete(void* p, const nothrow_t& nothrow_value) noexcept
+    {
+        cout << "call A::operator delete (noexcept)" << endl;
+        free(p);
+    }
+private:
+    int a;
+};
+
+int main()
+{
+    A* example1 = new A(1);
+    delete example1;
+    A* example2 = new(nothrow) A(2);
+    delete example2;
+}
+```
+
+**placement new**
+
+placement new仅在一个已经分配好的内存指针上调用构造函数。
+
+```c++
+void* operator new (std::size_t size, void* ptr) noexcept;
+class A
+{
+public:
+    A(int i) :a(i){}
+    int getValue(){ return a; }
+private:
+    int a;
+};
+
+int main()
+{
+    A* p1 = new A(1);           //在堆上分配
+    A  A2(2);                    //在栈上分配
+    A* p2 = &A2;
+    cout << "placement new前的值: " << p1->getValue() << "  " << p2->getValue() << endl;
+
+    A* p3 = new(p1) A(3);       //在p1的位置上构造
+    A* p4 = new(p2) A(4);       //在p2的位置上构造
+    cout << "placement new后的值: " << p1->getValue() << "  " << p2->getValue() << endl;
+}
+
+```
 
 ### shared_ptr和new结合使用（Using shared_ptrs with new）
 
@@ -244,7 +318,7 @@ unique_ptr<string> p3(new string("Trex"));
 p2.reset(p3.release()); // reset deletes the memory to which p2 had pointed
 ```
 
-调用`release`会切断`unique_ptr`和它原来管理的对象之间的联系。`release`返回的指针通常被用来初始化另一个智能指针或给智能指针赋值。如果没有用另一个智能指针保存`release`返回的指针，程序就要负责资源的释放。
+调用`release`会切断`unique_ptr`和它原来管理的对象之间的联系。`release`返回的指针通常被用来初始化另一个智能指针或给智能指针赋值。==如果没有用另一个智能指针保存release返回的指针，程序就要负责资源的释放==。
 
 ```c++
 p2.release();   // WRONG: p2 won't free the memory and we've lost the pointer
@@ -319,7 +393,7 @@ int *pia = new int[get_size()];   // pia points to the first of these ints
 
 由于`new`分配的内存并不是数组类型，因此不能对动态数组调用`begin`和`end`，也不能用范围`for`语句处理其中的元素。
 
-默认情况下，`new`分配的对象是默认初始化的。可以对数组中的元素进行值初始化，方法是在大小后面跟一对空括号`()`。在新标准中，还可以提供一个元素初始化器的花括号列表。如果初始化器数量大于元素数量，则`new`表达式失败，不会分配任何内存，并抛出`bad_array_new_length`异常。
+默认情况下，`new`分配的对象是默认初始化的。==可以对数组中的元素进行值初始化，方法是在大小后面跟一对空括号()==。在新标准中，还可以提供一个元素初始化器的花括号列表。如果初始化器数量大于元素数量，则`new`表达式失败，不会分配任何内存，并抛出`bad_array_new_length`异常。
 
 ```c++
 int *pia = new int[10];     // block of ten uninitialized ints
@@ -358,7 +432,7 @@ up.release();   // automatically uses delete[] to destroy its pointer
 
 ![12-6](Images/12-6.png)
 
-与`unique_ptr`不同，`shared_ptr`不直接支持动态数组管理。如果想用`shared_ptr`管理动态数组，必须提供自定义的删除器。
+==与unique_ptr不同，shared_ptr不直接支持动态数组管理。如果想用shared_ptr管理动态数组，必须提供自定义的删除器==。
 
 ```c++
 // to use a shared_ptr we must supply a deleter
@@ -404,6 +478,8 @@ alloc.construct(q++, "hi");     // *q is hi!
 while (q != p)
     alloc.destroy(--q);  // free the strings we actually allocated
 ```
+
+调用deallocate前必选先调用destory。
 
 `deallocate`函数用于释放`allocator`分配的内存空间。传递给`deallocate`的指针不能为空，它必须指向由`allocator`分配的内存。而且传递给`deallocate`的大小参数必须与调用`allocator`分配内存时提供的大小参数相一致。
 

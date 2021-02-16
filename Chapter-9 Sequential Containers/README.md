@@ -114,7 +114,7 @@ array<int, 10>::size_type i;   // array type includes element type and size
 array<int>::size_type j;       // error: array<int> is not a type
 ```
 
-对`array`进行列表初始化时，初始值的数量不能大于`array`的大小。如果初始值的数量小于`array`的大小，则只初始化靠前的元素，剩余元素会被值初始化。如果元素类型是类类型，则该类需要一个默认构造函数。
+对`array`进行列表初始化时，初始值的数量不能大于`array`的大小。==如果初始值的数量小于array的大小，则只初始化靠前的元素，剩余元素会被值初始化==。如果元素类型是类类型，则该类需要一个默认构造函数。
 
 可以对`array`进行拷贝或赋值操作，但要求二者的元素类型和大小都相同。
 
@@ -134,7 +134,7 @@ names = oldstyle;   // error: container types don't match
 names.assign(oldstyle.cbegin(), oldstyle.cend());
 ```
 
-由于其旧元素被替换，因此传递给`assign`的迭代器不能指向调用`assign`的容器本身。
+==由于其旧元素被替换，因此传递给assign的迭代器不能指向调用assign的容器本身==。
 
 `swap`交换两个相同类型容器的内容。除`array`外，`swap`不对任何元素进行拷贝、删除或插入操作，只交换两个容器的内部数据结构，因此可以保证快速完成。
 
@@ -144,7 +144,7 @@ vector<string> svec2(24);   // vector with 24 elements
 swap(svec1, svec2);
 ```
 
-赋值相关运算会导致指向左边容器内部的迭代器、引用和指针失效。而`swap`操作交换容器内容，不会导致迭代器、引用和指针失效（`array`和`string`除外）。
+==赋值相关运算会导致指向左边容器内部的迭代器、引用和指针失效。而swap操作交换容器内容，不会导致迭代器、引用和指针失效==（`array`和`string`除外）。
 
 对于`array`，`swap`会真正交换它们的元素。因此在`swap`操作后，指针、引用和迭代器所绑定的元素不变，但元素值已经被交换。
 
@@ -185,7 +185,7 @@ a1 = a2;    // replaces elements in a1
 a2 = {0};   // error: cannot assign to an array from a braced list
 ```
 
-新标准库同时提供了成员和非成员函数版本的`swap`。非成员版本的`swap`在泛型编程中非常重要，建议统一使用非成员版本的`swap`。
+新标准库同时提供了成员和非成员函数版本的`swap`。非成员版本的`swap`在泛型编程中非常重要，==建议统一使用非成员版本的swap==。
 
 ### 容器大小操作（Container Size Operations）
 
@@ -193,9 +193,9 @@ a2 = {0};   // error: cannot assign to an array from a braced list
 
 ### 关系运算符（Relational Operators）
 
-每个容器类型都支持相等运算符（`==`、`!=`）。除无序关联容器外，其他容器都支持关系运算符（`>`、`>=`、`<`、`<=`）。关系运算符两侧的容器类型和保存元素类型都必须相同。
+每个容器类型都支持相等运算符（`==`、`!=`）。==除无序关联容器外==，其他容器都支持关系运算符（`>`、`>=`、`<`、`<=`）。关系运算符两侧的容器类型和保存元素类型都必须相同。
 
-两个容器的比较实际上是元素的逐对比较，其工作方式与`string`的关系运算符类似：
+==两个容器的比较实际上是元素的逐对比较，其工作方式与string的关系运算符类似==：
 
 - 如果两个容器大小相同且所有元素对应相等，则这两个容器相等。
 - 如果两个容器大小不同，但较小容器中的每个元素都等于较大容器中的对应元素，则较小容器小于较大容器。
@@ -243,7 +243,7 @@ slist.insert(slist.begin(), "Hello!");
 svec.insert(svec.begin(), "Hello!");
 ```
 
-将元素插入到`vector`、`deque`或`string`的任何位置都是合法的，但可能会很耗时。
+==将元素插入到vector、deque或string的任何位置都是合法的，但可能会很耗时==。
 
 在新标准库中，接受元素个数或范围的`insert`版本返回指向第一个新增元素的迭代器，而旧版本中这些操作返回`void`。如果范围为空，不插入任何元素，`insert`会返回第一个参数。
 
@@ -268,7 +268,7 @@ c.push_back(Sales_data("978-0590353403", 25, 15.99));
 
 传递给`emplace`的参数必须与元素类型的构造函数相匹配。
 
-`forward_list`有特殊版本的`insert`和`emplace`操作，且不支持`push_back`和`emplace_back`。`vector`和`string`不支持`push_front`和`emplace_front`。
+==forward_list有特殊版本的insert和emplace操作，且不支持push_back和emplace_back。vector和string不支持push_front和emplace_front==。
 
 ### 访问元素（Accessing Elements）
 
@@ -282,7 +282,7 @@ c.push_back(Sales_data("978-0590353403", 25, 15.99));
 
 在容器中访问元素的成员函数都返回引用类型。如果容器是`const`对象，则返回`const`引用，否则返回普通引用。
 
-可以快速随机访问的容器（`string`、`vector`、`deque`和`array`）都提供下标运算符。保证下标有效是程序员的责任。如果希望确保下标合法，可以使用`at`成员函数。`at`类似下标运算，但如果下标越界，`at`会抛出`out_of_range`异常。
+可以快速随机访问的容器（`string`、`vector`、`deque`和`array`）都提供下标运算符。保证下标有效是程序员的责任。如果希望确保下标合法，可以使用at成员函数。`at`类似下标运算，但如果下标越界，`at`会抛出`out_of_range`异常。
 
 ```c++
 vector<string> svec;  // empty vector
@@ -302,7 +302,7 @@ cout << svec.at(0);   // throws an out_of_range exception
 
 `pop_front`和`pop_back`函数分别删除首元素和尾元素。`vector`和`string`类型不支持`pop_front`，`forward_list`类型不支持`pop_back`。
 
-`erase`函数删除指定位置的元素。可以删除由一个迭代器指定的单个元素，也可以删除由一对迭代器指定的范围内的所有元素。两种形式的`erase`都返回指向删除元素（最后一个）之后位置的迭代器。
+`erase`函数删除指定位置的元素。可以删除由一个迭代器指定的单个元素，也可以删除由一对迭代器指定的范围内的所有元素。==两种形式的erase都返回指向删除元素（最后一个）之后位置的迭代器==。
 
 ```c++
 // delete the range of elements between two iterators
@@ -345,7 +345,7 @@ elem1 = slist.erase(elem1, elem2);  // after the call elem1 == elem2
 
 必须保证在每次改变容器后都正确地重新定位迭代器。
 
-不要保存`end`函数返回的迭代器。
+==不要保存end函数返回的迭代器==。
 
 ```c++
 // safer: recalculate end on each trip whenever the loop adds/erases elements
@@ -372,7 +372,7 @@ while (begin != v.end())
 
 只有当需要的内存空间超过当前容量时，`reserve`才会真正改变容器容量，分配不小于需求大小的内存空间。当需求大小小于当前容量时，`reserve`并不会退回内存空间。因此在调用`reserve`之后，`capacity`会大于或等于传递给`reserve`的参数。
 
-在C++11中可以使用`shrink_to_fit`函数来要求`deque`、`vector`和`string`退回不需要的内存空间（并不保证退回）。
+==在C++11中可以使用shrink_to_fit函数来要求deque、vector和string退回不需要的内存空间（并不保证退回）==。
 
 ## 额外的string操作（Additional string Operations）
 
@@ -450,7 +450,7 @@ C++11增加了`string`和数值之间的转换函数：
 
 ![9-19](Images/9-19.png)
 
-默认情况下，`stack`和`queue`是基于`deque`实现的，`priority_queue`是基于`vector`实现的。可以在创建适配器时将一个命名的顺序容器作为第二个类型参数，来重载默认容器类型。
+默认情况下，==stack和queue是基于deque实现的，priority_queue是基于vector实现的。可以在创建适配器时将一个命名的顺序容器作为第二个类型参数，来重载默认容器类型==。
 
 ```c++
 // empty stack implemented on top of vector

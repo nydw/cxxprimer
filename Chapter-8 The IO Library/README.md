@@ -40,7 +40,7 @@ IO库条件状态：
 
 ![8-2](Images/8-2.png)
 
-`badbit`表示系统级错误，如不可恢复的读写错误。通常情况下，一旦`badbit`被置位，流就无法继续使用了。在发生可恢复错误后，`failbit`会被置位，如期望读取数值却读出一个字符。如果到达文件结束位置，`eofbit`和`failbit`都会被置位。如果流未发生错误，则`goodbit`的值为0。如果`badbit`、`failbit`和`eofbit`任何一个被置位，检测流状态的条件都会失败。
+==badbit表示系统级错误==，如不可恢复的读写错误。通常情况下，一旦`badbit`被置位，流就无法继续使用了。在发生可恢复错误后，`failbit`会被置位，如期望读取数值却读出一个字符。如果到达文件结束位置，`eofbit`和`failbit`都会被置位。如果流未发生错误，则`goodbit`的值为0。如果`badbit`、`failbit`和`eofbit`任何一个被置位，检测流状态的条件都会失败。
 
 ```c++
 while (cin >> word)
@@ -66,7 +66,7 @@ cin.setstate(old_state);    // now reset cin to its old state
 - 程序正常结束。
 - 缓冲区已满。
 - 使用操纵符（如`endl`）显式刷新缓冲区。
-- 在每个输出操作之后，可以用`unitbuf`操纵符设置流的内部状态，从而清空缓冲区。默认情况下，对`cerr`是设置`unitbuf`的，因此写到`cerr`的内容都是立即刷新的。
+- 在每个输出操作之后，==可以用unitbuf操纵符设置流的内部状态清空缓冲区==。默认情况下，对`cerr`是设置`unitbuf`的，因此写到`cerr`的内容都是立即刷新的。
 - 一个输出流可以被关联到另一个流。这种情况下，当读写被关联的流时，关联到的流的缓冲区会被刷新。默认情况下，`cin`和`cerr`都关联到`cout`，因此，读`cin`或写`cerr`都会刷新`cout`的缓冲区。
 
 `flush`操纵符刷新缓冲区，但不输出任何额外字符。`ends`向缓冲区插入一个空字符，然后刷新缓冲区。
@@ -77,7 +77,7 @@ cout << "hi!" << flush;  // writes hi, then flushes the buffer; adds no data
 cout << "hi!" << ends;   // writes hi and a null, then flushes the buffer
 ```
 
-如果想在每次输出操作后都刷新缓冲区，可以使用`unitbuf`操纵符。它令流在接下来的每次写操作后都进行一次`flush`操作。而`nounitbuf`操纵符则使流恢复使用正常的缓冲区刷新机制。
+如果想在每次输出操作后都刷新缓冲区，==使用unitbuf操纵符使每次写操作后都进行一次flush操作，nounitbuf操纵符则使流恢复使用正常的缓冲区刷新机制==。
 
 ```C++
 cout << unitbuf;    // all writes will be flushed immediately
@@ -87,7 +87,7 @@ cout << nounitbuf;  // returns to normal buffering
 
 如果程序异常终止，输出缓冲区不会被刷新。
 
-当一个输入流被关联到一个输出流时，任何试图从输入流读取数据的操作都会先刷新关联的输出流。标准库将`cout`和`cin`关联在一起，因此下面的语句会导致`cout`的缓冲区被刷新：
+==当一个输入流被关联到一个输出流时，任何试图从输入流读取数据的操作都会先刷新关联的输出流==。标准库将`cout`和`cin`关联在一起，因此下面的语句会导致`cout`的缓冲区被刷新：
 
 ```c++
 cin >> ival;
@@ -131,7 +131,7 @@ ofstream out;   // output file stream that is not associated with any file
 
 可以先定义空文件流对象，再调用`open`函数将其与指定文件关联。如果`open`调用失败，`failbit`会被置位。
 
-对一个已经打开的文件流调用`open`会失败，并导致`failbit`被置位。随后试图使用文件流的操作都会失败。如果想将文件流关联到另一个文件，必须先调用`close`关闭当前文件，再调用`clear`重置流的条件状态（`close`不会重置流的条件状态）。
+对一个已经打开的文件流调用`open`会失败，并导致`failbit`被置位。随后试图使用文件流的操作都会失败。如果想将文件流关联到另一个文件，==必须先调用close关闭当前文件，再调用clear重置流的条件状态==（`close`不会重置流的条件状态）。
 
 当`fstream`对象被销毁时，`close`会自动被调用。
 

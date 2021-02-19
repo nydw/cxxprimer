@@ -502,9 +502,45 @@ hp = std::move(hp2);    // move constructor moves hp2
 
 移动赋值运算符可以直接检查自赋值情况。
 
-C++11标准库定义了移动迭代器（move iterator）适配器。一个移动迭代器通过改变给定迭代器的解引用运算符的行为来适配此迭代器。移动迭代器的解引用运算符返回一个右值引用。
+C++11标准库定义了==移动迭代器（move iterator）适配器==。一个移动迭代器通过改变给定迭代器的解引用运算符的行为来适配此迭代器。移动迭代器的解引用运算符返回一个右值引用。
 
 ==调用make_move_iterator函数能将一个普通迭代器转换成移动迭代器。原迭代器的所有其他操作在移动迭代器中都照常工作==。
+
+move_iterator 迭代器适配器，又可简称为移动迭代器，其可以实现以移动而非复制的方式，==将某个区域空间中的元素移动至另一个指定的空间==。
+
+```c++
+
+    #include <iostream>
+    #include <vector>
+    #include <list>
+    #include <string>
+    using namespace std;
+    int main()
+    {
+        //创建并初始化一个 vector 容器
+        vector<string> myvec{ "STL","Python","Java" };
+        //再次创建一个 vector 容器，利用 myvec 为其初始化
+        vector<string>othvec(make_move_iterator(myvec.begin()), make_move_iterator(myvec.end()));
+       
+        cout << "myvec:" << endl;
+        //输出 myvec 容器中的元素
+        for (auto ch : myvec) {
+            cout << ch << " ";
+        }
+        cout << endl << "othvec:" << endl;
+        //输出 othvec 容器中的元素
+        for (auto ch : othvec) {
+            cout << ch << " ";
+        }
+        return 0;
+    }
+  
+////////output
+myvec:
+
+othvec:
+STL Python Java
+```
 
 ==最好不要在移动构造函数和移动赋值运算符这些类实现代码之外的地方随意使用move操作==。
 

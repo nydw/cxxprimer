@@ -32,7 +32,7 @@ vector<int> vec1{1, 2, 3}, vec2{4, 5, 6};
 cout << compare(vec1, vec2) << endl;    // T is vector<int>
 ```
 
-模板类型参数（type parameter）可以用来指定函数的返回类型或参数类型，以及在函数体内用于变量声明和类型转换。类型参数前必须使用关键字`class`或`typename`。
+模板类型参数（type parameter）可以用来指定函数的==返回类型或参数类型，以及在函数体内用于变量声明和类型转换==。类型参数前必须使用关键字`class`或`typename`。
 
 ```c++
 // ok: same type used for the return type and parameter
@@ -52,7 +52,7 @@ template <typename T, class U> calc (const T&, const U&);
 
 建议使用`typename`而不是`class`来指定模板类型参数，这样更加直观。
 
-模板非类型参数（nontype parameter）需要用特定的类型名来指定，表示一个值而非一个类型。非类型参数可以是整型、指向对象或函数类型的指针或左值引用。
+模板非类型参数（nontype parameter）需要用特定的类型名来指定，表示一个值而非一个类型。==非类型参数可以是整型、指向对象或函数类型的指针或左值引用==。
 
 ```c++
 template<unsigned N, unsigned M>
@@ -93,7 +93,7 @@ int compare(const T &v1, const T &v2)
 }
 ```
 
-只有当模板的一个特定版本被实例化时，编译器才会生成代码。此时编译器需要掌握生成代码所需的信息，因此函数模板和类模板成员函数的定义通常放在头文件中。
+只有当模板的一个特定版本被实例化时，编译器才会生成代码。此时编译器需要掌握生成代码所需的信息，因此==函数模板和类模板成员函数的定义通常放在头文件中==。
 
 使用模板时，所有不依赖于模板参数的名字都必须是可见的，这是由模板的设计者来保证的。模板设计者应该提供一个头文件，包含模板定义以及在类模板或成员定义中用到的所有名字的声明。
 

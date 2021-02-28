@@ -565,7 +565,7 @@ C++的早期版本规定，在联合中不能含有定义了构造函数或拷�
 
 ## 局部类（Local Classes）
 
-==定义在某个函数的内部的类，这种类被称为局部类==。局部类定义的类型只能在定义它的作用域内可见。
+定义在==某个函数的内部==的类，这种类被称为==局部类==。局部类定义的类型只能在定义它的作用域内可见。
 
 局部类的所有成员（包括成员函数）都必须完整定义在类的内部，因此局部类的作用与嵌套类相比相差很远。
 
@@ -598,7 +598,7 @@ void foo(int val)
 
 常规的访问保护规则对于局部类同样适用。外层函数对局部类的私有成员没有任何访问特权。局部类可以将外层函数声明为友元。
 
-可以在局部类的内部再嵌套一个类。此时嵌套类的定义可以出现在局部类之外，不过嵌套类必须定义在与局部类相同的作用域中。
+可以在局部类的内部再嵌套一个类。此时嵌套类的定义可以出现在局部类之外，不过嵌套类必须定义在与局部类相同的函数作用域中。
 
 ```c++
 void foo()
@@ -626,7 +626,7 @@ void foo()
 
 位域的声明形式是在成员名字之后紧跟一个冒号和一个常量表达式，该表达式用于指定成员所占的二进制位数。
 
-位域的类型必须是==整型或枚举类型==。因为带符号位域的行为是由具体实现确定的，所以通常情况下使用无符号类型保存位域。位域类型的大小不能小于位域结构的总大小。
+位域的类型必须是==整型或枚举类型==。因为带符号位域的行为是由具体实现确定的，所以==通常使用无符号类型保存位域==。位域类型的大小不能小于位域结构的总大小。
 
 ```c++
 struct Descriptor
@@ -682,9 +682,11 @@ volatile Task *curr_task;        // curr_task points to a volatile object
 volatile int iax[max_size];      // each element in iax is volatile
 ```
 
-类可以将成员函数定义为`volatile`的。`volatile`对象只能调用`volatile`成员函数。
+==类可以将成员函数定义为volatile的。volatile对象只能调用volatile成员函数==。
 
 `volatile`和指针的关系类似`const`。可以声明`volatile`指针、指向`volatile`对象的指针和指向`volatile`对象的`volatile`指针。
+
+==volatile对象的地址只能赋给volatile的指针，volatile对象只能用volatile引用==。
 
 ```c++
 volatile int v;      // v is a volatile int
@@ -698,7 +700,7 @@ int *ip = &v;   // error: must use a pointer to volatile
 vivp = &v;      // ok: vivp is a volatile pointer to volatile
 ```
 
-不能使用合成的拷贝/移动构造函数和赋值运算符初始化`volatile`对象或者给`volatile`对象赋值。合成的成员接受的形参类型是非`volatile`常量引用，不能把非`volatile`引用绑定到`volatile`对象上。
+不能使用合成的拷贝/移动构造函数和赋值运算符初始化`volatile`对象或者给`volatile`对象赋值。==合成的成员接受的形参类型是非volatile常量引用==，不能把非`volatile`引用绑定到`volatile`对象上。
 
 如果类需要拷贝、移动或赋值它的`volatile`对象，则必须自定义拷贝或移动操作。
 
@@ -750,11 +752,11 @@ C++从C语言继承的标准库函数可以定义成C函数，但并非必须。
 编写函数所使用的语言是函数类型的一部分。因此对于使用链接指示定义的函数来说，它的每个声明都必须使用相同的链接指示，而且指向这类函数的指针也必须使用与函数本身一样的链接指示。
 
 ```c++
-// pf points to a C function that returns void and takes an int
+// pf points to a C function that returns void and takes an int c. c函数指针必须指向c函数
 extern "C" void (*pf)(int);
 ```
 
-指向C函数的指针与指向C++函数的指针是不同的类型，两者不能相互赋值或初始化（少数C++编译器支持这种赋值操作并将其视为对语言的扩展，但是从严格意义上来说它是非法的）。
+==指向C函数的指针与指向C++函数的指针是不同的类型，两者不能相互赋值或初始化==（少数C++编译器支持这种赋值操作并将其视为对语言的扩展，但是从严格意义上来说它是非法的）。
 
 ```c++
 void (*pf1)(int);   // points to a C++ function
@@ -762,7 +764,7 @@ extern "C" void (*pf2)(int);    // points to a C function
 pf1 = pf2;   // error: pf1 and pf2 have different types
 ```
 
-链接指示不仅对函数本身有效，对作为返回类型或形参类型的函数指针也有效。所以如果希望给C++函数传入指向C函数的指针，必须使用类型别名。
+==链接指示不仅对函数本身有效，对返回类型或形参类型的函数指针也有效==。所以如果希望给C++函数传入指向C函数的指针，必须使用类型别名。
 
 ```c++
 // f1 is a C function; its parameter is a pointer to a C function
@@ -773,7 +775,7 @@ extern "C" typedef void FC(int);
 void f2(FC *);
 ```
 
-通过链接指示定义函数，可以令C++函数在其他语言编写的程序中可用。编译器会为该函数生成适合于指定语言的代码。
+通过链接指示定义函数，可以导出C++函数到其他语言。编译器会为该函数生成适合于指定语言的代码。
 
 ```c++
 // the calc function can be called from C programs
@@ -790,7 +792,7 @@ extern "C"
 int strcmp(const char*, const char*);
 ```
 
-链接指示与重载函数的相互作用依赖于目标语言。C语言不支持函数重载，所以一个C链接指示只能用于说明一组重载函数中的某一个。
+链接指示与重载函数的相互作用依赖于目标语言。==C语言不支持函数重载，所以一个C链接指示只能用于一组重载函数中的某一个==。
 
 ```c++
 // error: two extern "C" functions with the same name

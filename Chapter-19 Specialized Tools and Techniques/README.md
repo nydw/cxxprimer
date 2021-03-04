@@ -19,7 +19,7 @@
 
 程序可以在全局作用域中定义`operator new`和`operator delete`函数，也可以将其定义为成员函数。编译器发现`new`或`delete`表达式后，将在程序中查找可供调用的`operator`函数。如果被分配或释放的对象是类类型，编译器会先在类及其基类的作用域中查找。如果该类含有`operator`成员，则表达式会调用这些成员。否则编译器会继续在全局作用域查找。如果找到自定义版本，则使用该版本的函数。如果没找到，则使用标准库定义的版本。
 
-可以使用作用域运算符令`new`或`delete`表达式忽略定义在类中的函数，直接执行全局作用域版本。
+==可以使用作用域运算符令new或delete表达式忽略定义在类中的函数，直接执行全局作用域版本==。
 
 标准库定义了`operator new`和`operator delete`函数的8个重载版本，其中前4个版本可能抛出`bad_alloc`异常，后4个版本不会抛出异常。重载这些运算符时，必须使用关键字`noexcept`指定其不抛出异常。
 
@@ -36,13 +36,13 @@ void *operator delete(void*, nothrow_t&) noexcept;
 void *operator delete[](void*, nothrow_t&) noexcept
 ```
 
-`nothrow_t`类型是定义在头文件*new*中的一个结构体，这个类型不包含任何成员。头文件*new*还定义了一个名为`nothrow`的`const`对象，用户可以通过这个对象请求`new`的非抛出版本。
+`nothrow_t`类型是定义在头文件*new*中的一个结构体，这个类型不包含任何成员。==头文件*new*还定义了一个名为nothrow的const对象，用户可以通过这个对象请求new的非抛出版本==。
 
 ==将operator函数定义为类的成员时，它们是隐式静态的，无须显式地声明static==。因为`operator new`用在对象构造之前，`operator delete`用在对象销毁之后，所以它们必须是静态成员，而且不能操纵类的任何数据成员。
 
 `operator new`和`operator new[]`函数的返回类型必须是`void*`，第一个形参的类型必须是`size_t`且不能有默认实参。编译器调用`operator new`时，用存储指定类型对象所需的字节数初始化`size_t`形参；调用`operator new[]`时，传入函数的则是存储数组中所有元素所需的空间。
 
-自定义`operator new`函数时可以为它提供额外的形参，用到这些自定义函数的`new`表达式必须使用`new`的定位形式传递参数。下面这种形式的`new`函数只供标准库使用，不能被用户重定义：
+自定义`operator new`函数时可以为它提供额外的形参，==用到这些自定义函数的new表达式必须使用new的定位形式传递参数==。下面这种形式的`new`函数只供标准库使用，不能被用户重定义：
 
 ```c++
 void *operator new(size_t, void*);   // this version may not be redefined
@@ -71,9 +71,9 @@ void operator delete(void *mem) noexcept
 
 ### 定位new表达式（Placement new Expressions）
 
-在C++的早期版本中，`allocator`类还不是标准库的一部分。如果程序想分开内存分配和初始化过程，需要直接调用`operator new`和`operator delete`函数。它们类似`allocator`类的`allocate`和`deallocate`成员，负责分配或释放内存空间，但不会构造或销毁对象。
+在C++的早期版本中，`allocator`类还不是标准库的一部分。==如果程序想分开内存分配和初始化过程==，需要直接调用`operator new`和`operator delete`函数。它们类似`allocator`类的`allocate`和`deallocate`成员，负责分配或释放内存空间，但不会构造或销毁对象。
 
-不能使用`allocator`类的`construct`函数在`operator new`分配的内存空间中构造对象，而应该使用定位`new`表达式构造。
+==不能使用allocator类的construct函数在operator new分配的内存空间中构造对象，而应该使用定位new表达式构造==。
 
 ```c++
 new (place_address) type
@@ -86,7 +86,7 @@ new (place_address) type [size] { braced initializer list }
 
 当仅通过一个地址值调用定位`new`时，它会使用`operator new(size_t, void*)`函数（用户无法重载的版本）。该函数不分配任何内存，直接返回指针形参。然后由`new`表达式负责在指定的地址初始化对象。
 
-传递给`construct`函数的指针必须指向同一个`allocator`对象分配的空间，但是传递给定位`new`的指针无须指向`operator new`分配的内存，甚至不需要指向动态内存。
+==传递给construct函数的指针必须指向同一个allocator对象分配的空间，但是传递给定位new的指针无须指向operator new分配的内存，甚至不需要指向动态内存==。
 
 调用析构函数会销毁对象，但不会释放内存。如果需要的话，可以重新使用该空间。
 
@@ -153,7 +153,7 @@ dynamic_cast<type&&>(e)
 
 ### typeid运算符（The typeid Operator）
 
-`typeid`表达式的形式是`typeid(e)`，其中*e*可以是任意表达式或类型名称。`typeid`的结果是一个指向常量对象的引用，该对象的类型是标准库`type_info`（定义在头文件*typeinfo*中）或`type_info`的公有派生类型。
+`typeid`表达式的形式是`typeid(e)`，其中*e*可以是任意表达式或类型名称。==typeid的结果是一个指向常量对象的引用，该对象的类型是标准库type_info（定义在头文件*typeinfo*中）或type_info的公有派生类型==。
 
 `typeid`可以作用于任何类型的表达式，其中的顶层`const`会被忽略。如果表达式是一个引用，则`typeid`返回该引用所指对象的类型。当`typeid`作用于数组或函数时，不会执行向指针的标准类型转换。
 
@@ -176,7 +176,7 @@ if (typeid(*bp) == typeid(Derived))
 }
 ```
 
-`typeid`应该作用于对象。当`typeid`作用于指针时，返回的结果是该指针的静态编译类型。
+==typeid应该作用于对象。当typeid作用于指针时，返回的结果是该指针的静态编译类型==。
 
 ```c++
 // test always fails: the type of bp is pointer to Base
@@ -249,7 +249,7 @@ bool Base::equal(const Base &rhs) const
 
 `type_info`类一般是作为一个基类出现，所以它还应该提供一个公有虚析构函数。当编译器希望提供额外的类型信息时，通常在`type_info`的派生类中完成。
 
-`type_info`类没有默认构造函数，而且它的拷贝和移动构造函数以及赋值运算符都被定义为删除的。创建`type_info`对象的唯一方式就是使用`typeid`运算符。
+`type_info`类没有默认构造函数，而且它的拷贝和移动构造函数以及赋值运算符都被定义为删除的。==创建type_info对象的唯一方式就是使用typeid运算符==。
 
 对于某种给定类型来说，`name`成员的返回值因编译器而异并且不一定与在程序中使用的名字一致。对于`name`返回值的唯一要求就是类型不同则返回的字符串必须有所区别。
 
@@ -259,7 +259,7 @@ bool Base::equal(const Base &rhs) const
 
 C++包含两种枚举：
 
-- 限定作用域的枚举（scoped enumeration，C++11新增）。定义形式是关键字`enum class`（或`enum struct`）后接枚举类型名字以及用花括号包围、以逗号分隔的枚举成员（enumerator）列表。
+- ==限定作用域的枚举==（scoped enumeration，C++11新增）。定义形式是关键字`enum class`（或`enum struct`）后接枚举类型名字以及用花括号包围、以逗号分隔的枚举成员（enumerator）列表。
 
   ```c++
   enum class open_modes
@@ -270,7 +270,7 @@ C++包含两种枚举：
   };
   ```
 
-- 不限定作用域的枚举（unscoped enumeration）。定义时省略关键字`class`（或`struct`），枚举类型名字是可选的。
+- ==不限定作用域的枚举==（unscoped enumeration）。定义时省略关键字`class`（或`struct`），枚举类型名字是可选的。
 
   ```c++
   C++// unscoped enumeration
@@ -318,7 +318,7 @@ enum class intTypes
 
 枚举成员是`const`的，因此在初始化枚举成员时提供的初始值必须是常量表达式。
 
-可以在任何需要常量表达式的地方使用枚举成员。如：
+==可以在任何需要常量表达式的地方使用枚举成员==。如：
 
 - 定义枚举类型的`constexpr`变量。
 - 将枚举类型对象作为`switch`语句的表达式，而将枚举值作为`case`标签。
@@ -332,7 +332,7 @@ open_modes om = 2;        // error: 2 is not of type open_modes
 om = open_modes::input;   // ok: input is an enumerator of open_modes
 ```
 
-不限定作用域的枚举类型对象或枚举成员能自动转换成整型。
+==不限定作用域的枚举类型对象或枚举成员能自动转换成整型==。
 
 ```c++
 int i = color::red;     // ok: unscoped enumerator implicitly converted to int
@@ -348,7 +348,7 @@ enum intValues : unsigned long long
 };
 ```
 
-如果没有指定枚举的潜在类型，则默认情况下限定作用域的枚举成员类型是`int`。不限定作用域的枚举成员不存在默认类型。
+如果没有指定枚举的潜在类型，则默认情况下==限定作用域的枚举成员类型是int。不限定作用域的枚举成员不存在默认类型==。
 
 C++11中可以提前声明枚举。枚举的前置声明必须指定（无论隐式或显式）其成员的类型。
 
@@ -360,7 +360,7 @@ enum class open_modes;    // scoped enums can use int by default
 
 ## 类成员指针（Pointer to Class Member）
 
-成员指针（pointer to member）是指可以指向类的非静态成员的指针。
+==成员指针（pointer to member）是指可以指向类的非静态成员的指针==。
 
 成员指针的类型包括类的类型和成员的类型。初始化成员指针时，会令其指向类的某个成员，但是不指定该成员所属的对象。直到使用成员指针时，才提供成员所属的对象。
 
@@ -404,6 +404,8 @@ s = pScreen->*pdata;
 ```
 
 常规的访问控制规则对成员指针同样有效。数据成员一般是私有的，因此通常不能直接获得数据成员的指针。如果类希望外部代码能访问它的私有数据成员，可以定义一个函数，令其返回指向私有成员的指针。
+
+==想使用成员指针，必须把它绑定到screen类型的对象上==。
 
 ### 成员函数指针（Pointers to Member Functions）
 
@@ -459,7 +461,7 @@ function<bool (const string&)> fcn = &string::empty;
 find_if(svec.begin(), svec.end(), fcn);
 ```
 
-定义一个`function`对象时，必须指定该对象所能表示的函数类型（即可调用对象的形式）。如果可调用对象是一个成员函数，则第一个形参必须表示该成员是在哪个对象上执行的。
+定义一个`function`对象时，必须指定该对象所能表示的函数类型（即可调用对象的形式）。如果可调用对象是一个成员函数，则==第一个形参必须表示该成员是在哪个对象上执行的==。
 
 使用标准库功能`mem_fn`（定义在头文件*functional*中）可以让编译器推断成员的类型。和`function`一样，`mem_fn`可以从成员指针生成可调用对象。但`mem_fn`可以根据成员指针的类型推断可调用对象的类型，无须显式指定。
 
@@ -467,13 +469,23 @@ find_if(svec.begin(), svec.end(), fcn);
 find_if(svec.begin(), svec.end(), mem_fn(&string::empty));
 ```
 
-`mem_fn`生成的可调用对象可以通过对象和指针调用。
+`mem_fn`生成的可调用对象==可以通过对象和指针调用==。
 
 ```c++
 auto f = mem_fn(&string::empty);    // f takes a string or a string*
 f(*svec.begin());   // ok: passes a string object; f uses .* to call empty
 f(&svec[0]);        // ok: passes a pointer to string; f uses .-> to call empty
 ```
+
+bind生成可调用对象既可以是指针也可以是引用。
+
+```c++
+auto f = bind(&string::empty, -1);
+f(*svec.begin());
+f(&svec[0]);
+```
+
+
 
 ## 嵌套类（Nested Classes）
 

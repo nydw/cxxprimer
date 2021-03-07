@@ -479,7 +479,7 @@ while (q != p)
     alloc.destroy(--q);  // free the strings we actually allocated
 ```
 
-调用deallocate前必选先调用destory。
+==调用deallocate前必选先调用destory==。
 
 `deallocate`函数用于释放`allocator`分配的内存空间。传递给`deallocate`的指针不能为空，它必须指向由`allocator`分配的内存。而且传递给`deallocate`的大小参数必须与调用`allocator`分配内存时提供的大小参数相一致。
 
@@ -491,4 +491,4 @@ alloc.deallocate(p, n);
 
 ![12-8](Images/12-8.png)
 
-传递给`uninitialized_copy`的目的位置迭代器必须指向未构造的内存，它直接在给定位置构造元素。返回（递增后的）目的位置迭代器。
+==传递给uninitialized_copy的目的位置迭代器必须指向未构造的内存，它直接在给定位置构造元素。返回（递增后的）目的位置迭代器==。

@@ -463,7 +463,7 @@ template <typename T1, typename T2, typename T3>
 T1 sum(T2, T3);
 ```
 
-显式模板实参（explicit template argument）可以让用户自己控制模板的实例化。提供显式模板实参的方式与定义类模板实例的方式相同。显式模板实参在尖括号`<>`中指定，位于函数名之后，实参列表之前。
+显式模板实参（explicit template argument）可以让用户自己控制模板的实例化。提供显式模板实参的方式与定义类模板实例的方式相同。==显式模板实参在尖括号<>中指定，位于函数名之后，实参列表之前==。
 
 ```c++
 // T1 is explicitly specified; T2 and T3 are inferred from the argument types
@@ -505,11 +505,11 @@ auto fcn(It beg, It end) -> decltype(*beg)
 }
 ```
 
-标准库在头文件*type_traits*中定义了类型转换模板，这些模板常用于模板元程序设计。其中每个模板都有一个名为`type`的公有类型成员，表示一个类型。此类型与模板自身的模板类型参数相关。如果不可能（或不必要）转换模板参数，则`type`成员就是模板参数类型本身。
+标准库在头文件*type_traits*中定义了类型转换模板，==这些模板常用于模板元程序设计==。其中每个模板都有一个名为`type`的公有类型成员，表示一个类型。此类型与模板自身的模板类型参数相关。如果不可能（或不必要）转换模板参数，则`type`成员就是模板参数类型本身。
 
 ![16-1](Images/16-1.png)
 
-使用`remove_reference`可以获得引用对象的元素类型，如果用一个引用类型实例化`remove_reference`，则`type`表示被引用的类型。因为`type`是一个类的类型成员，所以在模板中必须使用关键字`typename`来告知编译器其表示一个类型。
+使用`remove_reference`可以获得引用对象的元素类型，如果用一个引用类型实例化`remove_reference`，则`type`表示被引用的类型。因为`type`是一个类的类型成员，所以在模板中==必须使用关键字typename来告知编译器其表示一个类型==。
 
 ```c++
 // must use typename to use a type member of a template parameter
@@ -544,7 +544,7 @@ func(compare<int>);    // passing compare(const int&, const int&)
 
 ### 模板实参推断和引用（Template Argument Deduction and References）
 
-当一个函数参数是模板类型参数的普通（左值）引用（形如`T&`）时，只能传递给它一个左值（如一个变量或一个返回引用类型的表达式）。*T*被推断为实参所引用的类型，如果实参是`const`的，则*T*也为`const`类型。
+==当一个函数参数是模板类型参数的普通（左值）引用（形如T&）时，只能传递给它一个左值（如一个变量或一个返回引用类型的表达式）==。*T*被推断为实参所引用的类型，如果实参是`const`的，则*T*也为`const`类型。
 
 ```c++
 template <typename T> void f1(T&);    // argument must be an lvalue
@@ -554,7 +554,7 @@ f1(ci);    // ci is a const int; template parameter T is const int
 f1(5);     // error: argument to a & parameter must be an lvalue
 ```
 
-当一个函数参数是模板类型参数的常量引用（形如`const T&`）时，可以传递给它任何类型的实参。函数参数本身是`const`时，*T*的类型推断结果不会是`const`类型。`const`已经是函数参数类型的一部分了，因此不会再是模板参数类型的一部分。
+==当一个函数参数是模板类型参数的常量引用（形如const T&）时，可以传递给它任何类型的实参==。函数参数本身是`const`时，*T*的类型推断结果不会是`const`类型。`const`已经是函数参数类型的一部分了，因此不会再是模板参数类型的一部分。
 
 ```c++
 template <typename T> void f2(const T&);    // can take an rvalue
@@ -565,7 +565,7 @@ f2(ci);    // ci is a const int, but template parameter T is int
 f2(5);     // a const & parameter can be bound to an rvalue; T is int
 ```
 
-当一个函数参数是模板类型参数的右值引用（形如`T&&`）时，如果传递给它一个右值，类型推断过程类似普通左值引用函数参数的推断过程，推断出的*T*类型是该右值实参的类型。
+==当一个函数参数是模板类型参数的右值引用（形如T&&）时，如果传递给它一个右值，类型推断过程类似普通左值引用函数参数的推断过程，推断出的*T*类型是该右值实参的类型==。
 
 ```c++
 template <typename T> void f3(T&&);
@@ -574,7 +574,7 @@ f3(42);    // argument is an rvalue of type int; template parameter T is int
 
 模板参数绑定的两个例外规则：
 
-- 如果将一个左值传递给函数的右值引用参数，且此右值引用指向模板类型参数时，编译器推断模板类型参数为实参的左值引用类型。
+- 如果将一个左值传递给函数的右值引用参数，且此右值引用指向模板类型参数时，编译器推断模板类型参数为实参的==左值引用类型==。
 
 - 如果间接创建了一个引用的引用（通过类型别名或者模板类型参数间接定义），则这些引用会被“折叠”。右值引用的右值引用会被折叠为右值引用。其他情况下，引用都被折叠为普通左值引用。
 
@@ -594,8 +594,8 @@ void f3<int&>(int&);       // when T is int&, function parameter collapses to in
 
 模板参数绑定的两个例外规则导致了两个结果：
 
-- 如果一个函数参数是指向模板类型参数的右值引用，则可以传递给它任意类型的实参。
-- 如果将一个左值传递给这样的参数，则函数参数被实例化为一个普通的左值引用。
+- ==如果一个函数参数是指向模板类型参数的右值引用，则可以传递给它任意类型的实参==。
+- ==如果将一个左值传递给这样的参数，则函数参数被实例化为一个普通的左值引用==。
 
 当代码中涉及的类型可能是普通（非引用）类型，也可能是引用类型时，编写正确的代码就变得异常困难。
 
@@ -609,7 +609,7 @@ void f3(T&& val)
 }
 ```
 
-实际编程中，模板的右值引用参数通常用于两种情况：模板转发其实参或者模板被重载。函数模板的常用重载形式如下：
+实际编程中，==模板的右值引用参数通常用于两种情况：模板转发其实参或者模板被重载==。函数模板的常用重载形式如下：
 
 ```c++
 template <typename T> void f(T&&);         // binds to nonconst rvalues
@@ -652,7 +652,7 @@ s2 = std::move(s1);     // ok: but after the assigment s1 has indeterminate valu
   - `move`的返回类型是`string&&`。
   - `move`的函数参数t的类型为`string& &&`，会折叠成`string&`。
 
-可以使用`static_cast`显式地将一个左值转换为一个右值引用。
+==可以使用static_cast显式地将一个左值转换为一个右值引用==。
 
 ### 转发（Forwarding）
 

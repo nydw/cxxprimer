@@ -706,7 +706,7 @@ flip2(g, i, 42);  // flip2 passes an lvalue to g’s rvalue reference parameter
 
 C++11在头文件*utility*中定义了`forward`。与`move`不同，`forward`必须通过显式模板实参调用，返回该显式实参类型的右值引用。即`forward<T>`返回类型`T&&`。
 
-通常情况下，可以使用`forward`传递定义为指向模板类型参数的右值引用函数参数。通过其返回类型上的引用折叠，`forward`可以保持给定实参的左值/右值属性。
+通常情况下，==可以使用forward传递定义为指向模板类型参数的右值引用函数参数。通过其返回类型上的引用折叠，forward可以保持给定实参的左值/右值属性==。
 
 ```c++
 template <typename Type>
@@ -771,7 +771,7 @@ string debug_rep(char *p)
 - 模板参数包（template parameter pack），表示零个或多个模板参数。
 - 函数参数包（function parameter pack），表示零个或多个函数参数。
 
-用一个省略号`…`来指出模板参数或函数参数表示一个包。在一个模板参数列表中，`class…`或`typename…`指出接下来的参数表示零个或多个类型的列表；一个类型名后面跟一个省略号表示零个或多个给定类型的非类型参数列表。在函数参数列表中，如果一个参数的类型是模板参数包，则此参数也是函数参数包。
+用一个省略号`…`来指出模板参数或函数参数表示一个包。==在一个模板参数列表中，class…或typename…指出接下来的参数表示零个或多个类型的列表；一个类型名后面跟一个省略号表示零个或多个给定类型的非类型参数列表==。在函数参数列表中，如果一个参数的类型是模板参数包，则此参数也是函数参数包。
 
 ```C++
 // Args is a template parameter pack; rest is a function parameter pack
@@ -783,7 +783,7 @@ void foo(const T &t, const Args& ... rest);
 
 对于一个可变参数模板，编译器会推断模板参数类型和参数数量。
 
-可以使用`sizeof…`运算符获取参数包中的元素数量。类似`sizeof`，`sizeof…`也返回一个常量表达式，而且不会对其实参求值。
+==可以使用sizeof…运算符获取参数包中的元素数量==。类似`sizeof`，`sizeof…`也返回一个常量表达式，而且不会对其实参求值。
 
 ```c++
 template<typename ... Args>
@@ -796,7 +796,7 @@ void g(Args ... args)
 
 ### 编写可变参数函数模板（Writing a Variadic Function Template）
 
-可变参数函数通常是递归的，第一步调用参数包中的第一个实参，然后用剩余实参调用自身。为了终止递归，还需要定义一个非可变参数的函数。
+==可变参数函数通常是递归的==，第一步调用参数包中的第一个实参，然后用剩余实参调用自身。为了终止递归，还需要定义一个非可变参数的函数。
 
 ```c++
 // function to end the recursion and print the last element
@@ -824,7 +824,7 @@ ostream &print(ostream &os, const T &t, const Args&... rest)
 
 ### 包扩展（Pack Expansion）
 
-对于一个参数包，除了获取其大小外，唯一能对它做的事情就是扩展。当扩展一个包时，需要提供用于每个扩展元素的模式（pattern）。扩展一个包就是将其分解为构成的元素，对每个元素应用模式，获得扩展后的列表。通过在模式右边添加一个省略号`…`来触发扩展操作。
+对于一个参数包，除了获取其大小外，唯一能对它做的事情就是扩展。当扩展一个包时，需要提供用于每个扩展元素的模式（pattern）。==扩展一个包就是将其分解为构成的元素，对每个元素应用模式，获得扩展后的列表==。通过在模式右边添加一个省略号`…`来触发扩展操作。
 
 包扩展工作过程：
 
